@@ -1,0 +1,163 @@
+#include <windows.h >
+#include <shellapi.h >
+#include <wincodec.h >
+
+#pragma 코멘트 (lib, "windowscodecs.lib")
+
+#WINDOW_WIDTH 1080 년
+#WINDOW_HEIGHT 720의
+
+IWICImagingFactory * pFactory = NULL;
+IWICBitmapDecoder * pDecoder = NULL;
+IWICBitmapFrameDecode * pFrame = NULL;
+IWICFormatConverter * pConverter = NULL;
+바이트 *  ⁇  = NULL;
+UINT imageWidth = 0, imageHeight = 0;
+
+LRESULT CALLBACK WindowProc (HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+HRESULT LoadImageFromFile (LPCWSTR acoiling);
+Loire DrawImage (HDC hdc, HWND hwnd);
+빈 청소 이미지 ();
+
+WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+{
+ CoInitializeEx (NULL, COINIT_MULTITHREADED);
+ CoCreateInstance (& CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER 및 IID_IWICImagingFactory, (LPVOID *) 및 pFactory);
+
+ const wchar_t CLASS_NAME [] = L "이미 지저분한 그림";
+ WNDCLASS wc = { 0 };
+ wc.lpfnWndProc = WindowProc;
+ wc.hInstance = hInstance;
+ wc.lpszClassName = CLASS_NAME;
+ 레지스터 클래스 (& wc);
+
+ HWND hwnd = CreateWindowEx (
+ CLASS_NAME, L "이미 지저분한",
+ WS_OVERLAPPEDWINDOW,
+ CW_USEDEFAULT, CW_USEDEFAULT, WINDOW_WIDTH, WINDOW_HEIGHT,
+ NULL, NULL, hInstance, NULL);
+
+ (== NULL)이 0은;
+
+ ShowWindow (hwnd, nCmdShow);
+
+ MSG msg = { 0 };
+ 동 (GetMessage (& msg, NULL, 0, 0))
+    {
+ TranslateMessage (& msg);
+ sas 치  ⁇ 시 지 (& msg);
+    }
+
+ CleanupImage ();
+ (pFactory) pFactory- > lpVtbl- > 방부 (pFactory);
+ CoUninitialize ();
+
+ 리 ?? 0;
+}
+
+LRESULT CALLBACK WindowProc (HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+ sac (uMsg)
+    {
+ 우사 WM_CREate :
+ DragAcceptFiles (hwnd, TRUE);
+ 리 ?? 0;
+
+ soes ission WM_DROPFILES :
+    {
+ HDROP hDrop = (HDROP) wParam;
+ [MAX_PATH];
+ (DragQueryFile (hDrop, 0, 파일 경로, MAX_PATH) > 0)
+        {
+ CleanupImage ();
+ if (SUCCEEDED (LoadImageFromFile (filePath)))
+            {
+ InvalidateRect (hwnd, NULL, TRUE);
+            }
+        }
+ (hDrop);
+ 리 ?? 0;
+    }
+
+ 우사 WM_PAINT :
+    {
+ ⌦;
+ HDC hdc = BeginPaint (hwnd 車 ps);
+ 이미 지 (hdc, hwnd);
+ EndPaint (hwnd 直 ps);
+ 리 ?? 0;
+    }
+
+ 우사 WM_DESTROY :
+ PostQuitMessage (0);
+ 리 ?? 0;
+    }
+ DefWindowProc (hwnd, uMsg, wParam, lParam);
+}
+
+HRESULT LoadImageFromFile (LPCWSTR aykoe ynain)
+{
+ HRESULT hr = pFactory- > lpVtbl- > CreateDecoderFromFilename (pFactory, filePath, NULL, GENERIC_READ, WICDecodeMetadataCacheOnLoad 車 Decoder);
+ (실제로)
+
+ hr = pDecoder- > lpVtbl- > GetFrame (pDecoder, 0 pFrame);
+ (실제로)
+
+ = pFactory- > lpVtbl- > CreateFormatConverter (pFactory pConverter);
+ (실제로)
+
+ hr = pConverter- > lpVtbl- > (pConverter, (IWICBitmapSource *) pFrame 交ID_WICPixelFormat32bppBGRA, WICBitmapDitherTypeNone, NULL, 0.
+ (실제로)
+
+ pConverter- > lpVtbl- > GetSize (pConverter 直 imageWidth 修Height);
+
+ ?? = (BYTE *) malloc (imageWidth * imageHeight * 4);
+  (!pPixels)는 E_OUTOFMEMORY에 있습니다.
+
+ hr = pConverter- > lpVtbl- > CopyPixels (pConverter, NULL, imageWidth * 4, imageWidth * imageHeight * 4, pPixels);
+  환;
+}
+
+void DrawImage (HDC hdc, HWND hwnd)
+{
+  (!pPixels) 直 환;
+
+ RECT clientRect;
+ GetClientRect (hwnd 直 clientRect);
+ int clientWidth = clientRect.right-clientRect.left;
+ int clientHeight = clientRect.bottom-clientRect.top;
+
+ float scaleX = (float) clientWidth / imageWidth;
+ float scaleY = (float) clientHeight / imageHeight;
+ ?? = (scaleX, scaleY);
+
+ int scaledWidth = (int) (imageWidth * scale);
+ int scaledHeight = (int) (imageHeight * scale);
+ int x = (?? 은? -scaledWidth) / 2;
+ int y = (clientHeight-scaledHeight) / 2;
+
+ BITMAPINFO bmi = { 0 };
+ bmi.bmiHeader.biSize = 이종상 (BITMAPINFOHEADER);
+ bmi.bmiHeader.biWidth = imageWidth;
+ bmi.bmiHeader.biHeight =-((LONG) imageHeight); //이 미미 지
+ bmi.bmiHeader.biPlanes = 1;
+ bmi.bmiHeader.biBitCount = 32;
+ bmi.bmiHeader.biCompression = BI_RGB;
+
+ SetStretchBltMode (hdc, HALFTONE);
+ StretchDIBits (hdc, x, y, scaledWidth, scaledHeight, 0, 0, imageWidth, imageHeight, pPixels 直 bmi, DIB_RGB_COLORS, SRCCOPY);
+}
+
+ ?? 이미 지 소개 ()
+{
+ (pConverter) pConverter- > lpVtbl- > ?? (pConverter);
+ (pFrame) pFrame- > lpVtbl- > ?? (pFrame);
+ if (pDecoder) pDecoder- > lpVtbl- > ?? (pDecoder);
+ ( ?? 유나 (?? );
+
+ pConverter = NULL;
+ pFrame = NULL;
+ pDecoder = NULL;
+ pPixels = NULL;
+ 이게 ?? = 이미 지저분한 = 0;
+}
