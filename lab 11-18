@@ -1,0 +1,177 @@
+
+#include <stdio.h> // 1, 2, 3, 4 사용 
+#include <malloc.h> // 3 사용 
+#include <time.h> // 1, 4 사용 
+
+const short unsigned int Rand(const short int);
+
+void main1()
+{
+	int arr[6] = { 0, 0, 0, 0, 0, 0 };
+	const int MAX = 6000;
+	for (int i = 0; i < MAX; i++)
+	{
+		arr[Rand(6) - 1]++;
+	}
+
+	int round = 0;
+	for (int i = 0; i < 6; i++)
+	{
+		round += arr[i];
+	} round = round / 6;
+
+	int min = 0;
+	for (int i = 0; i < 6; i++)
+	{
+		int d = round - arr[i];
+		min = min < d ? min : d;
+	}
+
+	puts("주사위 6000번 굴리고 결과 출력하기: ");
+
+	for (int i = 0; i < 6; i++)
+	{
+		printf("%d: %d: ", i + 1, arr[i]);
+		if (arr[i] < 1000) printf(" ");
+		for (int j = 0; j < (arr[i] - round) - min; j++)
+		{
+			printf("+");
+		}
+		puts("");
+	}
+
+}
+
+// 1번 끝 2번 시작
+
+void swap(int* a, int* b)
+{
+	int c = *a;
+	*a = *b;
+	*b = c;
+}
+
+int midPoint(int* arr, int low, int high)
+{
+	int point = arr[high];
+	int min = low - 1;
+	
+	for (int max = low; max < high; max++)
+	{
+		if (arr[max] < point) swap(&arr[++min], &arr[max]);
+	}
+	swap(&arr[++min], &arr[high]);
+	return min;
+}
+
+void qSort(int* arr, int low, int high)
+{
+	if (low < high); else return;
+	int point = midPoint(arr, low, high);
+	qSort(arr, low, point - 1);
+	qSort(arr, point + 1, high);
+}
+
+#define QSort( arr ) qSort( arr, 0, sizeof(arr) / sizeof(arr[0]) - 1 )
+
+void _arrPrint(int* arr, int size)
+{
+	for (int i = 0; i < size; i++) printf("%d ", arr[i]);
+}
+
+#define arrPrint( arr ) _arrPrint( arr, sizeof(arr) / sizeof(arr[0]) )
+
+void main2()
+{
+	puts("퀵 쇼트: ");
+	int arr[] = { 3, 4, 1, 5, 4 };
+	printf("기본 값: ");
+	arrPrint(arr);
+	puts("");
+	printf("정렬 값: ");
+	QSort(arr);
+	arrPrint(arr);
+	puts("");
+}
+
+// 2번 끝 3번 시작
+
+struct Node
+{
+	int d;
+	struct Node* l;
+	struct Node* r;
+};
+
+struct Node* newNode(int d)
+{
+	struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+	node->d = d;
+	node->l = NULL;
+	node->r = NULL;
+	return node;
+}
+
+struct Node* insert(struct Node* node, int d)
+{
+	if (node == NULL) return newNode(d);
+
+	if (node->d < d)
+	{
+		node->r = insert(node->r, d);
+	}
+	else
+	{
+		node->l = insert(node->l, d);
+	}
+
+	return node;
+}
+
+void nodePrint(struct Node* node)
+{
+	if (node == NULL) return;
+	nodePrint(node->l);
+	printf("%d ", node->d);
+	nodePrint(node->r);
+}
+
+void main3()
+{
+	struct Node* top = NULL;
+	puts("트리 정렬:");
+	int arr[] = { 2, 5, 3, 8, 1, 2, 6, 7 };
+	
+	printf("기본 값: ");
+	arrPrint(arr);
+	puts("");
+	
+	for(int i = 0; i < sizeof(arr) / sizeof(arr[0]); i++) top = insert(top, arr[i]);
+	printf("트리 정렬 기본값: ");
+	nodePrint(top);
+	puts("");
+}
+
+// 3번 끝 4번 시작
+
+const short unsigned int Rand(const short unsigned int size)
+{
+	static char frist = 1;
+	if (frist && !(frist = 0)) srand(time(NULL));
+	return ( rand() % size ) + 1;
+}
+
+void main4()
+{
+	printf("랜덤 함수: %d %d %d %d \n", Rand(256), Rand(256), Rand(256), Rand(256));
+}
+
+// 4번 끝 5번은 없다
+
+void main()
+{
+	main1();
+	main2();
+	main3();
+	main4();
+}
