@@ -1,0 +1,41 @@
+﻿0 0 0 0
+int 1 1
+int 2 2
+int 0 0
+int 6 6
+int 7 800
+int 9 1400
+
+
+case 30:
+
+
+7 = 7 + &100
+
+
+case 31:
+
+
+digitalWrite 6 1
+delay 7
+digitalWrite 6 0
+delay 7
+
+
+setup:
+
+
+pinMode 6 1
+
+
+loop:
+
+
+fun 30
+fun 31
+
+
+8 = 9 > 7
+jump 8 1 128
+exit
+end:

@@ -1,0 +1,92 @@
+﻿0 0 0 0
+int 1 1
+int 6 6
+int 9 9
+
+
+int 11 262
+int 12 294
+int 13 330
+int 14 349
+int 15 200
+int 19 100
+
+
+case 28:
+
+
+digitalRead 9 16
+jump 16 28 0
+
+
+case 29:
+
+
+tone 6 11 15
+1 15
+1 15
+tone 6 11 15
+1 15
+tone 6 12 15
+1 15
+1 15
+tone 6 11 15
+1 15
+1 15
+
+
+case 30:
+
+
+tone 6 12 15
+1 15
+1 15
+tone 6 12 15
+1 15
+1 15
+tone 6 13 15
+1 15
+1 15
+tone 6 13 19
+1 15
+tone 6 12 19
+1 15
+tone 6 12 19
+1 15
+tone 6 11 15
+1 15
+1 15
+
+
+case 31:
+
+
+tone 6 11 19
+1 19
+tone 6 11 19
+1 19
+tone 6 11 19
+1 15
+1 15
+
+
+setup:
+pinMode 6 1
+pinMode 9 2
+fun 28
+
+
+loop:
+
+
+fun 29
+fun 29
+1 15
+fun 30
+1 15
+fune 31
+1 15
+
+
+jump 1 0 0
+end:
